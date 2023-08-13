@@ -1,4 +1,3 @@
-
 from django.shortcuts import render,HttpResponse,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
@@ -80,37 +79,25 @@ def khoj_search(request):
 
 
 
-
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from .models import InputHistory
 from .serializers import InputHistorySerializer
 
-@api_view(['POST'])
-def post_input_numbers(request):
-    if request.method == 'POST':
-        input_values = request.data.get('input_values')  # Assuming input_values is a list of numbers
-
-        # Convert list of numbers to a comma-separated string
-        input_values_str = ', '.join(map(str, input_values))
-
-        # Store input values in the database
-        input_history = InputHistory(user=request.user, input_values=input_values_str)
-        input_history.save()
-
-        # Retrieve input history records for the user
-        input_history_records = InputHistory.objects.filter(user=request.user)
-
-        # Serialize input history records
-        input_values_serializer = InputValuesSerializer(input_history_records, many=True)
-
-        response_data = {
-            'status': 'success',
-            'user_id': request.user.id,
-            'payload': input_values_serializer.data
-        }
-
-        return Response(response_data)
-
-    return Response({'message': 'Invalid request method'})
-
+@api_view(['GET'])  # Use the appropriate HTTP methods here
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def input_history_api(request):
+    user_id = request.user.id
+    input_history_list = InputHistory.objects.filter(user=request.user).order_by('-timestamp')
+    serializer = InputHistorySerializer(input_history_list, many=True)
+    
+    response_data = {
+        "status": "success",
+        "user_id": user_id,
+        "payload": serializer.data
+    }
+    
+    return Response(response_data)
