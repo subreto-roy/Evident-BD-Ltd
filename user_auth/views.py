@@ -13,7 +13,7 @@ import datetime
 
 @login_required(login_url='login')
 def HomePage(request):
-    return render(request, 'khoj_search.html')
+    return render(request, 'home.html')
 
 
 
@@ -75,7 +75,7 @@ def khoj_search(request):
     # Retrieve input history for the user in descending order
     input_history_list = InputHistory.objects.filter(user=request.user).order_by('-timestamp')
 
-    return render(request, 'khoj_search.html', {'result': result, 'input_history_list': input_history_list})
+    return render(request, 'home.html', {'result': result})
 
 
 
@@ -86,7 +86,7 @@ from rest_framework.response import Response
 from .models import InputHistory
 from .serializers import InputHistorySerializer
 
-@api_view(['GET'])  # Use the appropriate HTTP methods here
+@api_view(['GET'])  
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def input_history_api(request):
