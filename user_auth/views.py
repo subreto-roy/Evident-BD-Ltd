@@ -8,6 +8,18 @@ from django.shortcuts import render
 
 from .models import InputHistory
 import datetime
+
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .models import InputHistory
+from .serializers import InputHistorySerializer
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from .models import InputHistory
+from .serializers import InputHistorySerializer
 # Create your views here.
 
 
@@ -50,13 +62,15 @@ def LogoutPage(request):
     logout(request)
     return redirect('login')
 
+
+#Search Function
 from .models import InputHistory
 import datetime
 
 @login_required(login_url='login')
 def khoj_search(request):
     result = None
-    input_history_list = []  # List to store input history
+    input_history_list = [] 
 
     if request.method == 'POST':
         input_values = request.POST.get('input_values')
@@ -72,24 +86,45 @@ def khoj_search(request):
         # Check if search value is in input values
         result = search_value in input_list
 
-    # Retrieve input history for the user in descending order
+   
     input_history_list = InputHistory.objects.filter(user=request.user).order_by('-timestamp')
 
     return render(request, 'home.html', {'result': result})
 
 
 
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from .models import InputHistory
-from .serializers import InputHistorySerializer
 
-@api_view(['GET'])  
+#session Based API
+
+
+
+@api_view(['GET']) 
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
+def seasion_history_api(request):
+    user_id = request.user.id
+    input_history_list = InputHistory.objects.filter(user=request.user).order_by('-timestamp')
+    serializer = InputHistorySerializer(input_history_list, many=True)
+    
+    response_data = {
+        "status": "success",
+        "user_id": user_id,
+        "payload": serializer.data
+    }
+    
+    return Response(response_data)
+
+
+
+
+#Token Base API
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def input_history_api(request):
+    
     user_id = request.user.id
     input_history_list = InputHistory.objects.filter(user=request.user).order_by('-timestamp')
     serializer = InputHistorySerializer(input_history_list, many=True)

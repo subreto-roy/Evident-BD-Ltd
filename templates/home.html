@@ -80,19 +80,30 @@
               <div class="detail_box">
                 <form method="post">
                     {% csrf_token %}
-                    <label for="input_values">Input Values:</label>
+                    <label for="input_values"> Input Values:</label>
                     <input type="text" name="input_values" required><br>
                     <label for="search_value">Search Value:</label>
                     <input type="number" name="search_value" required><br>
-                    <button class="btn btn-primary" type="submit">Khoj</button>
+                    <div>
+                      {% if result is not None %}
+                      <p>Result: {{ result }}</p>
+                      {% endif %}
+                    </div>
+            
+
+
+
+
+                    <div>
+
+                      <button style="padding: 10px 40px; background-color:#4b208c; border-radius: 35px; margin-top: 35px;" class="ce btn btn-primary" type="submit">Khoj</button>
+                      <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+                    </div>
+                   
                 </form>
-                {% if result is not None %}
-                <p>Result: {{ result }}</p>
-                {% endif %}
-            
-            
                 
-                <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+             
+              
               </div>
             </div>
             <div class="col-lg-5 col-md-6 offset-lg-1">
