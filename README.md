@@ -1,7 +1,7 @@
 # Evident-BD-Ltd
 1. Clone the repository:
    ```sh
-   [git clone https://github.com/your-username/your-project.git](https://github.com/subreto-roy/Evident-BD-Ltd.git](https://github.com/subreto-roy/Evident-BD-Ltd.git)
+   git clone https://github.com/subreto-roy/Evident-BD-Ltd.git
    cd AmiCodingPariNa/
    ```
 
