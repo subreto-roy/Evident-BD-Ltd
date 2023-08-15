@@ -35,7 +35,7 @@ first you need to sign up then you can search the value.
 Token Based API:
 first you need to run this url
 http://127.0.0.1:8000/api/
-than run tha main.py and put the Token number.
+than run tha main.py and give the Token number.
 
 Session Based API:
 First you need to log in then run this url
